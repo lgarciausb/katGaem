@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body style="display:flex;overflow:hidden">
+  <div id="score" style="visibility:hidden;font-size: 30px; user-select: none;margin-left:0"></div>
+  <div id="stuff" style="text-align:center;font-size: 30px;user-select: none;margin: auto;margin-top: 100px;display: inline;">W/S TO MOVE <br> SPACEBAR TO SHOOT <br> <br> CLICK HERE TO START <br> love u</div>
+  
+  <script>
+    let interval = null;
+    let score;
+    let chance;
+    let clicked = false
+    let time;
+    const pew = [];
+    const monsters = [];
+    let croc = null;
+    const physics = [
+      "momentum",
+      "voltage",
+      "gravity",
+      "Newton",
+      "pulleys",
+      "velocity",
+      "force",
+      "friction",
+      "carnot machine",
+      "pressure",
+      "databog fysik kemi",
+      "inertia tensor",
+      "PV = nRT",
+      "torque",
+      "F = ma",
+      "angular momentum",
+      "coulomb",
+      "joules",
+      "Maxwell",
+      "air drag",
+      "tension",
+      "electron",
+      "magnetic field",
+      "mechanics",
+      "matter",
+      "photons",
+      "electric charge",
+      "acceleration",
+      "Faraday",
+      "Tesla",
+      "electron shell",
+      "nuclear force",
+      "energy",
+      "nuclear fission",
+      "refraction",
+      "pendulum",
+      "mass",
+      "thermodynamics",
+      "Bohr",
+      "THE CRINGE TEACHER",
+      "STANDING WAVES",
+      "GAMMA RAYS",
+    ]
+
+    function randint(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randcolor() {
+      return "#" + Math.floor(Math.random()*16777215).toString(16);
+    }
+
+    function Entity(x, y, t, c, v = null) {
+        this.d = document.createElement("div")
+        this.s = this.d.style
+        this.s.position = "absolute"
+        this.s.userSelect = "none"
+        this.s.whiteSpace = "nowrap"
+        this.s.fontSize = "40px"
+        this.s.left = x + "px"
+        this.s.top = y + "px"
+        this.d.innerText = this.t = t
+        this.s.color = c
+        if (v != null) this.v = v
+
+        document.body.appendChild(this.d)
+
+        var c = this.d.getBoundingClientRect();
+        this.width = c.right - c.left
+        this.height =  c.bottom - c.top
+    }
+    Entity.prototype.x = function() {return this.d.getBoundingClientRect().x}
+    Entity.prototype.y = function() {return this.d.getBoundingClientRect().y}
+
+    function intersect(div1, div2) {
+
+      var div1Rect = div1.getBoundingClientRect();
+      var div2Rect = div2.getBoundingClientRect();
+
+      var intersect = !(
+        div1Rect.right < div2Rect.left || 
+        div1Rect.left > div2Rect.right || 
+        div1Rect.bottom < div2Rect.top || 
+        div1Rect.top > div2Rect.bottom
+      );
+
+      return intersect;
+    }
+
+    const Kat = new Entity(0, 50, "KATRINE", "blue") 
+    Kat.pressed = []
+    Kat.move = function() {
+      if (!this.pressed.length) return
+      if (this.pressed[0] == "W") Kat.s.top = Math.min(window.innerHeight - 60, Math.max(60, Kat.y() - 14)) + "px"
+      if (this.pressed[0] == "S") Kat.s.top = Math.min(window.innerHeight - 60, Math.max(60, Kat.y() + 14)) + "px"
+    }
+    Kat.shot = false
+    Kat.shoot = function() {
+      this.shot = true
+      pew.push(
+          new Entity(this.width, this.y(), "pew", randcolor(), 50 )
+      )
+    }
+
+    function start() {
+      lost = false
+      Kat.shot = false
+      Kat.v = 0
+      score = 0
+      time = 0
+      chance = 99
+      let croc = null;
+      document.querySelector("#score").innerHTML = "score: " + score
+      document.querySelector("#stuff").style.visibility = "hidden"
+      document.querySelector("#stuff").onclick = ()=>{}
+      // document.onclick = (e) => {
+      //   pew.push(
+      //     new Entity(Kat.width, Kat.y(), "pew", randcolor(), 50 )
+      //   )
+      // }
+      // document.onclick()
+      interval = setInterval(tick, 20)
+    }
+
+    lost = true
+    function lose() {
+      lost = true
+        clearInterval(interval)
+        for (let p of pew) p.d.remove()
+        for (let m of monsters) m.d.remove()
+        pew.length = monsters.length = 0
+        if (croc != null) croc.d.remove()
+        croc = null;
+        document.onclick = ()=>{}
+        document.querySelector("#stuff").style.visibility= "visible"
+        document.querySelector("#stuff").innerHTML = " you lost :c <br> click here to restart "
+        document.querySelector("#stuff").onclick = start
+      }
+
+
+    function tick() {
+    
+      if (randint(1, 100) > chance) {
+        monsters.push(
+          new Entity(window.innerWidth, randint(60, window.innerHeight-60), physics[randint(0, physics.length-1)], randcolor(), Math.log2(randint(64, 500)) )
+        )
+        if (monsters[monsters.length-1].t == "THE CRINGE TEACHER") monsters[monsters.length-1].lives = 3
+      }
+
+      time += 20
+
+      if (time % 10000 == 0) chance--
+
+      if (time % 10000 == 0 && randint(1, 100) > 50 && croc == null) croc = new Entity(window.innerWidth, randint(60, window.innerHeight-60), "🐊", "green", Math.log2(randint(64, 800)) )
+
+
+      if (croc != null) {
+        if (croc.x() - croc.v < 0) {
+          croc.d.remove()
+          croc = null
+        } else {
+          croc.s.left = (croc.x() - croc.v) + "px"
+          if (intersect(croc.d, Kat.d)) {
+            for (let m of monsters) m.d.remove()
+            score += monsters.length + monsters.filter(m=> m.t == "THE CRINGE TEACHER").length*2
+            document.querySelector("#score").innerHTML = "score: " + score
+            monsters.length = 0
+            croc.d.remove()
+            croc = null
+            chance+=2
+            if (chance >99) chance = 99
+          }
+        }
+      }
+
+      for (let m of monsters) {
+        if (m.x() - m.v < 0) {
+          lose()
+          return
+        }
+        m.s.left = (m.x() - m.v) + "px"
+        if (m.t == "STANDING WAVES") {
+          m.s.top = Math.min(window.innerHeight - 60, Math.max(60, m.y() + 8*Math.cos(m.x()/120))) + "px"
+        }
+        if (m.t == "GAMMA RAYS") {
+          m.s.top = Math.min(window.innerHeight - 60, Math.max(60, m.y() + 32*Math.sin(m.x()*2))) + "px"
+        }
+      }
+
+      for (let p of pew) {
+        if (p.gone) continue
+        for (let m of monsters) {
+          if (m.gone) continue
+          if (intersect(p.d, m.d)) {
+            p.gone = true
+            if (m.t == "THE CRINGE TEACHER") {
+              m.lives--
+              m.s.color = randcolor()
+              if (m.lives <= 0) {
+                m.gone = true
+                score +=3
+              }
+            } else {
+              m.gone = true
+              score++
+            }
+            document.querySelector("#score").innerHTML = "score: " + score
+            continue
+          }
+        }
+      }
+
+      for (var i = monsters.length - 1; i >= 0; i--) {
+        if (monsters[i].gone) {
+          monsters[i].d.remove()
+          monsters.splice(i, 1);
+        }
+      }
+  
+    }
+
+
+
+    window.onload = function() {
+
+
+      // document.onmousemove = (e) => {
+      //   Kat.s.top = Math.min(window.innerHeight - 60, Math.max(60, e.clientY - Kat.height/2)) + "px"
+      // }
+      document.addEventListener('keydown', function(event) {
+        if (event.code === 'KeyW') {
+          if (!Kat.pressed.includes("W")) Kat.pressed.unshift("W")
+        } else if (event.code === 'KeyS') {
+          if (!Kat.pressed.includes("S")) Kat.pressed.unshift("S")
+        } else if (event.code === 'Space') {
+          Kat.shoot()
+        }
+      });
+      document.addEventListener('keyup', function(event) {
+        if (event.code === 'KeyW') {
+          Kat.pressed = Kat.pressed.filter(e=>e != "W")
+        } else if (event.code === 'KeyS') {
+          Kat.pressed = Kat.pressed.filter(e=>e != "S")
+        } else if (event.code === 'Space') {
+          Kat.shot = false
+        }
+      });
+
+
+      setInterval( () => {
+        Kat.move()
+
+        for (let p of pew) {
+        if (p.x() + p.width + p.v > window.innerWidth) {
+          p.gone = true
+          continue
+        }
+        p.s.left = (p.x() + p.v) + "px"
+      }
+
+      for (var i = pew.length - 1; i >= 0; i--) {
+        if (pew[i].gone) {
+          pew[i].d.remove()
+          pew.splice(i, 1);
+        }
+      }
+      }
+        , 20)
+      // document.onclick = (e) => {
+      //   start()
+      // }
+      document.querySelector("#stuff").onclick = start
+  
+    }
+
+  </script>
+</body>
+</html>
+
