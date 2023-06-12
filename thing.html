@@ -6,7 +6,7 @@
   <title>Document</title>
 </head>
 <body style="display:flex;overflow:hidden">
-  <div id="score" style="visibility:hidden;font-size: 30px; user-select: none;margin-left:0"></div>
+  <div id="score" style="font-size: 30px; user-select: none;margin-left:0"></div>
   <div id="stuff" style="text-align:center;font-size: 30px;user-select: none;margin: auto;margin-top: 100px;display: inline;">W/S TO MOVE <br> SPACEBAR TO SHOOT <br> <br> CLICK HERE TO START <br> love u</div>
   
   <script>
@@ -18,49 +18,49 @@
     const pew = [];
     const monsters = [];
     let croc = null;
-    const physics = [
-      "momentum",
-      "voltage",
-      "gravity",
-      "Newton",
-      "pulleys",
-      "velocity",
-      "force",
-      "friction",
-      "carnot machine",
-      "pressure",
-      "databog fysik kemi",
-      "inertia tensor",
-      "PV = nRT",
-      "torque",
-      "F = ma",
-      "angular momentum",
-      "coulomb",
-      "joules",
-      "Maxwell",
-      "air drag",
-      "tension",
-      "electron",
-      "magnetic field",
-      "mechanics",
-      "matter",
-      "photons",
-      "electric charge",
-      "acceleration",
-      "Faraday",
-      "Tesla",
-      "electron shell",
-      "nuclear force",
-      "energy",
-      "nuclear fission",
-      "refraction",
-      "pendulum",
-      "mass",
-      "thermodynamics",
-      "Bohr",
-      "THE CRINGE TEACHER",
-      "STANDING WAVES",
-      "GAMMA RAYS",
+    const ps = [
+      "bW9tZW50dW0=",
+      "dm9sdGFnZQ==",
+      "Z3Jhdml0eQ==",
+      "TmV3dG9u",
+      "cHVsbGV5cw==",
+      "dmVsb2NpdHk=",
+      "Zm9yY2U=",
+      "ZnJpY3Rpb24=",
+      "Y2Fybm90IG1hY2hpbmU=",
+      "cHJlc3N1cmU=",
+      "ZGF0YWJvZyBmeXNpayBrZW1p",
+      "aW5lcnRpYSB0ZW5zb3I=",
+      "UFYgPSBuUlQ=",
+      "dG9ycXVl",
+      "RiA9IG1h",
+      "YW5ndWxhciBtb21lbnR1bQ==",
+      "Y291bG9tYg==",
+      "am91bGVz",
+      "TWF4d2VsbA==",
+      "YWlyIGRyYWc=",
+      "dGVuc2lvbg==",
+      "ZWxlY3Ryb24=",
+      "bWFnbmV0aWMgZmllbGQ=",
+      "bWVjaGFuaWNz",
+      "bWF0dGVy",
+      "cGhvdG9ucw==",
+      "ZWxlY3RyaWMgY2hhcmdl",
+      "YWNjZWxlcmF0aW9u",
+      "RmFyYWRheQ==",
+      "VGVzbGE=",
+      "ZWxlY3Ryb24gc2hlbGw=",
+      "bnVjbGVhciBmb3JjZQ==",
+      "ZW5lcmd5",
+      "bnVjbGVhciBmaXNzaW9u",
+      "cmVmcmFjdGlvbg==",
+      "cGVuZHVsdW0=",
+      "bWFzcw==",
+      "dGhlcm1vZHluYW1pY3M=",
+      "Qm9ocg==",
+      "VEhFIENSSU5HRSBURUFDSEVS",
+      "U1RBTkRJTkcgV0FWRVM=",
+      "R0FNTUEgUkFZUw=="
     ]
 
     function randint(min, max) {
@@ -108,7 +108,7 @@
       return intersect;
     }
 
-    const Kat = new Entity(0, 50, "KATRINE", "blue") 
+    const Kat = new Entity(0, 50, atob( "S0FUUklORQ=="), "blue") 
     Kat.pressed = []
     Kat.move = function() {
       if (!this.pressed.length) return
@@ -163,7 +163,7 @@
     
       if (randint(1, 100) > chance) {
         monsters.push(
-          new Entity(window.innerWidth, randint(60, window.innerHeight-60), physics[randint(0, physics.length-1)], randcolor(), Math.log2(randint(64, 500)) )
+          new Entity(window.innerWidth, randint(60, window.innerHeight-60), atob(ps[randint(0, ps.length-1)]), randcolor(), Math.log2(randint(64, 500)) )
         )
         if (monsters[monsters.length-1].t == "THE CRINGE TEACHER") monsters[monsters.length-1].lives = 3
       }
